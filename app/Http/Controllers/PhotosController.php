@@ -14,7 +14,8 @@ class PhotosController extends Controller
     }
 
 
-    public function submitForm(Request $request){
+    public function submitForm(Request $request)
+    {
         if ($request->hasFile('file')) {
             $client = new RekognitionClient([
                 // 'region'    => env('AWS_DEFAULT_REGION'),
@@ -33,7 +34,37 @@ class PhotosController extends Controller
 
             return $results;
             $resultLabels = $results->get('ModerationLabels');
-        }    
+        }
+    }
+
+    public function subirFile(Request $request)
+    {
+        //return $request;
+
+        if ($request->hasFile('file')) {
+            $client = new RekognitionClient([
+                'region' => env('AWS_DEFAULT_REGION'),
+                'version' => 'latest',
+            ]);
+
+            $image = fopen($request->file('file')->getPathname(), 'r');
+            $bytes = fread($image, $request->file('file')->getSize());
+
+            $results = $client->detectModerationLabels([
+                'Image' => [
+                    'Bytes' => $bytes,
+                ],
+                'MinConfidence' => 50,
+            ]);
+
+            $resultLabels = $results->get('ModerationLabels');
+            return $resultLabels;
+
+
+            return response()->json(['message' => 'no se detectaron etiquetas']);
+        } else {
+            return response()->json(['message' => 'Error al subir el aaarchivo']);
+        }
     }
     // public function submitForm(Request $request)
     // {
