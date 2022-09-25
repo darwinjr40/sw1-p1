@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PhotosController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('showForm/', [PhotosController::class, 'showForm'])->name('showForm');
+Route::post('submitForm/', [PhotosController::class, 'submitForm'])->name('submitForm');
