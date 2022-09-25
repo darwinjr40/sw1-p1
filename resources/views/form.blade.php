@@ -44,7 +44,7 @@
                 </div>
                 <div class="form-group">
                     <label for="photo">Upload a Photo</label>
-                    <input type="file" name="photo" id="photo" class="form-control">
+                    <input type="file" name="file" id="photo" class="form-control">
                 </div>
                 <div class="form-group">
                     <input type="submit" value="Submit" class="btn btn-success btn-lg">

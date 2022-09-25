@@ -13,24 +13,31 @@ class PhotosController extends Controller
         return view('form');
     }
 
+
     public function submitForm(Request $request){
-        if ($request->hasFile('photo')) {  //existe un archivo con nombre <files>
-            $imagen= [];
-            // $data = array("evento_id" => $request['evento_id']);
-            $files = $request->file('photo'); //retorna un object con los datos de los archivos
-            foreach ($files as $file) {
-                return "entro";
-            }
-                $data['pathPrivate'] = Storage::disk('s3')->put(12, $files, 'public');
-                $data['path'] = Storage::disk('s3')->url($data['pathPrivate']);
-                $imagen[] = $data;
-            // $request['datos'] = $imagen;
-            return "nise";
-        }
+        if ($request->hasFile('file')) {
+            $client = new RekognitionClient([
+                // 'region'    => env('AWS_DEFAULT_REGION'),
+                'region' => config('services.ses.region'),
+                'version' => 'latest',
+            ]);
+
+            $image = fopen($request->file('file')->getPathname(), 'r');
+            $bytes = fread($image, $request->file('file')->getSize());
+            $results = $client->detectModerationLabels([
+                'Image' => [
+                    'Bytes' => $bytes,
+                ],
+                'MinConfidence' => 50,
+            ]);
+
+            return $results;
+            $resultLabels = $results->get('ModerationLabels');
+        }    
     }
     // public function submitForm(Request $request)
     // {
-    //     // return env('AWS_DEFAULT_REGION');
+    //     // return config('services.ses.region');
     //     $client = new RekognitionClient([
     //         // 'region'    => env('AWS_DEFAULT_REGION'),
     //         'region'    => config('services.ses.region'),
