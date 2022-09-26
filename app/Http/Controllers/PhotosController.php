@@ -10,6 +10,7 @@ class PhotosController extends Controller
 {
     public function showForm()
     {
+        return env('AWS_DEFAULT_REGION');
         return view('form');
     }
 
@@ -18,8 +19,7 @@ class PhotosController extends Controller
     {
         if ($request->hasFile('file')) {
             $client = new RekognitionClient([
-                // 'region'    => env('AWS_DEFAULT_REGION'),
-                'region' => config('services.ses.region'),
+                'region'    => env('AWS_DEFAULT_REGION'),
                 'version' => 'latest',
             ]);
 
@@ -39,7 +39,7 @@ class PhotosController extends Controller
 
     public function subirFile(Request $request)
     {
-        //return $request;
+        // return "nise";
 
         if ($request->hasFile('file')) {
             $client = new RekognitionClient([
