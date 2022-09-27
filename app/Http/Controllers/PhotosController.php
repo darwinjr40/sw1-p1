@@ -58,7 +58,7 @@ class PhotosController extends Controller
             ]);
 
             $resultLabels = $results->get('ModerationLabels');
-            return $resultLabels;
+            // return $resultLabels;
 
 
             return response()->json(['message' => 'no se detectaron etiquetas']);
