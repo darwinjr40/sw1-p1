@@ -19,3 +19,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('subirFile', [PhotosController::class, 'subirFile']);
+Route::post('subirImagen', [PhotosController::class, 'subirImagen']);

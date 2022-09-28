@@ -21,7 +21,7 @@ class PhotosController extends Controller
         'region'    => env('AWS_DEFAULT_REGION'),
         'version'   => 'latest'
       ]);
-      $bytes= [];
+      $bytes = [];
       $files = $request->file('files'); //retorna un object con los datos de los archivos
       foreach ($files as $f) {
         $i = fopen($f->getPathName(), 'r');
@@ -82,42 +82,39 @@ class PhotosController extends Controller
         'MinConfidence' => intval($request->input('confidence'))
       ])['TextDetections'];
 
-<<<<<<< HEAD
-        if ($request->hasFile('file')) {
-            $client = new RekognitionClient([
-                'region' => env('AWS_DEFAULT_REGION'),
-                'version' => 'latest',
-            ]);
-
-            $image = fopen($request->file('file')->getPathname(), 'r');
-            $bytes = fread($image, $request->file('file')->getSize());
-
-            $results = $client->detectModerationLabels([
-                'Image' => [
-                    'Bytes' => $bytes,
-                ],
-                'MinConfidence' => 50,
-            ]);
-
-            $resultLabels = $results->get('ModerationLabels');
-            // return $resultLabels;
-
-
-            return response()->json(['message' => 'no se detectaron etiquetas']);
-        } else {
-            return response()->json(['message' => 'Error al subir el aaarchivo']);
-=======
       $string = '';
       // return $results;
       foreach ($results as $item) {
         if ($item['Type'] === 'WORD') {
           $string .= $item['DetectedText'] . ' ';
->>>>>>> 5d9228588a99248aa918b8610bb8c005cafe6169
         }
       }
       $message = empty($string) ? "This photo does not have any words" :  'This photo says ' . $string;
     }
     request()->session()->flash('success', $message);
     return view('form', ['results' => $results]);
+  }
+
+  public  function subirImagen(Request $request)
+  {
+    if ($request->hasFile('files')) {  //existe un archivo con nombre <files>
+      $imagen = [];
+      // $data = array("evento_id" => $request['evento_id']);
+      $file = $request->file('files'); //retorna un object con los datos de los archivos
+        $data['pathPrivate'] = Storage::disk('s3')->put(12, $file, 'public');
+        $data['path'] = Storage::disk('s3')->url($data['pathPrivate']);
+        return response()->json([
+          'pathPrivate' => $data['pathPrivate'],
+          'path' => $data['path']
+      ]);
+    }
+
+    return response()->json(['message' => 'no se detectaron etiquetas']);
+    
+    // if (isset($response['errors'])) {
+    //   return back()->withErrors($response->json()['errors']);
+    // } else {
+    //   return back()->with('success', $response->json()['message']);
+    // }
   }
 }
