@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Aws\Rekognition\RekognitionClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
+use Image;
 class PhotosController extends Controller
 {
   public function showForm()
@@ -97,16 +97,28 @@ class PhotosController extends Controller
 
   public  function subirImagen(Request $request)
   {
+    // return public_path('img/destino');
     if ($request->hasFile('files')) {  //existe un archivo con nombre <files>
       $imagen = [];
       // $data = array("evento_id" => $request['evento_id']);
       $file = $request->file('files'); //retorna un object con los datos de los archivos
-        $data['pathPrivate'] = Storage::disk('s3')->put(12, $file, 'public');
-        $data['path'] = Storage::disk('s3')->url($data['pathPrivate']);
-        return response()->json([
-          'pathPrivate' => $data['pathPrivate'],
-          'path' => $data['path']
-      ]);
+        // $data['pathPrivate'] = Storage::disk('s3')->put(12, $file, 'public');
+        // $data['path'] = Storage::disk('s3')->url($data['pathPrivate']);
+        $img = Image::make(
+          "https://s3service12.s3.amazonaws.com/12/hWkWlIyOcfK7AXHrQ82rBmpWXehymDP4YGJDfFW4.jpg"
+        );
+        $request->files->move(public_path().'/prueba');
+        return "nise todo";
+        $img->resize(200, null,function($constraint){
+          $constraint->aspectRatio();
+        });
+        $img->save(public_path('prueba'));
+      return "nise todo";
+
+      //   return response()->json([
+      //     'pathPrivate' => $data['pathPrivate'],
+      //     'path' => $data['path']
+      // ]);
     }
 
     return response()->json(['message' => 'no se detectaron etiquetas']);
